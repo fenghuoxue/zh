@@ -1,0 +1,19 @@
+<div class="col-md-4">
+    <div class="page-header">
+        <h2>热门浏览</h2>
+    </div>
+    <!--输出循环变量：默认使用循环变量i为索引-->
+    <div class="list-group">
+        {volist name="hotArtList" id="art"}
+        <a href="#" class="list-group-item
+           {eq name="$i" value="1"}
+           active
+           {/eq}"
+        >
+        {$art.title}<span class="badge">{$art.pv}</span>
+        </a>
+        {/volist}
+
+
+    </div>
+</div>

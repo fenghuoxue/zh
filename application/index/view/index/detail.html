@@ -1,0 +1,153 @@
+{extend name="public:base" /}
+{block name="body"}
+<!--主体-->
+<div class="row">
+    <!--左侧8列-->
+    <div class="col-md-8">
+        <!--页头-->
+        <div class="page-header">
+            <h2>{$art.cate_id|getCateName}</h2>
+        </div>
+
+        <div>
+            <div>
+                <h4>{$art.title}</h4>
+                <p>发布者：{$art.user_id|getUserName}
+                    发布时间：{$art.create_time|date='Y-m-d'}
+                    阅读量：{$art.pv}
+                </p>
+                <div>{$art.content|getArtContent}</div>
+                <hr>
+                {notempty name="$Think.session.user_id"}
+                {if $fav == 1 }
+                <button class="btn  btn-default btn-success" type="button" id="fav" article_id="{$art.id}" session_id="{$Think.session.user_id}">取消收藏</button>
+                {else}
+                <button class="btn" type="button" id="fav" article_id="{$art.id}" session_id="{$Think.session.user_id}">收藏</button>
+                {/if}
+                {if $like == 1 }
+                <button class="btn btn-default btn-success" type="button" id="like" article_id="{$art.id}" session_id="{$Think.session.user_id}">取消点赞</button>
+                {else}
+                <button class="btn" type="button" id="like" article_id="{$art.id}" session_id="{$Think.session.user_id}">点赞</button>
+                {/if}
+                {/notempty}
+            </div>
+        </div>
+        <!--评论-->
+        {if $Think.session.user_id > 0}
+        <h4>发表评论</h4>
+        <form class="form-horizontal" id="comment">
+            <input type="hidden" name="article_id" value="{$art.id}">
+            <input type="hidden" name="user_id" value="{$Think.session.user_id}">
+            <textarea name="content" id="" cols="125" rows="10"></textarea>
+            <div class="text-center">
+                <button type="button" class="btn btn-info" id="submit">提交</button>
+            </div>
+            <p class="text-success" id="res"></p>
+        </form>
+        {/if}
+        {volist name="commentList" id="comment" empty="没有评论"}
+        <div>
+            <p>{$comment.user_id|getUserName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$comment.create_time|date="Y-m-d"}</p>
+            <div style="min-height: 50px">{$comment.content}</div>
+            <hr>
+        </div>
+        {/volist}
+        <script>
+            $('#submit').on('click',function () {
+                $.get("{:url('insertComment')}",$('#comment').serialize(),function (data){
+                    $('#res').text(data.message);
+                })
+            })
+            
+            $(function () {
+                $('#fav').on('click',function () {
+                    //获取当前用户的ID和文章的ID
+                    var artId = $(this).attr('article_id');
+                    var sessionId = $(this).attr('session_id');
+                    if(sessionId && artId)
+                    {
+                        // $.get("{:url('index/fav')}"),
+                        //     {
+                        //         session_id:sessionId,
+                        //         article_id:artId
+                        //     },
+                        //     function (data) {
+                        //         alert(data.message);
+                        //     }
+                        $.ajax(
+                            {
+                                type:'get',
+                                url:"{:url('index/fav')}",
+                                data:{
+                                    article_id:artId,
+                                    session_id:sessionId,
+                                    time:new Date().getTime()
+                                },
+                                dataType:'json',
+                                success:function (data) {
+                                    switch (data.status) {
+                                        case 1:
+                                            alert(data.message);
+                                            $('#fav').attr('class','btn btn-success');
+                                            $('#fav').text("取消收藏");
+                                            break;
+                                        case 0:
+                                            alert(data.message);
+                                            $('#fav').attr('class','btn');
+                                            $('#fav').text('收藏');
+                                            break;
+                                        case -1:
+                                            alert(data.message);
+                                            break;
+                                    }
+                                }
+                            }
+                        )
+                    }else{
+                        alert('请登录后再收藏');
+                    }
+                })
+
+                $('#like').on('click',function () {
+                    //获取当前用户的ID和文章的ID
+                    var artId = $(this).attr('article_id');
+                    var sessionId = $(this).attr('session_id');
+                    if(sessionId && artId)
+                    {
+                        $.ajax(
+                            {
+                                type:'get',
+                                url:"{:url('index/like')}",
+                                data:{
+                                    article_id:artId,
+                                    session_id:sessionId,
+                                    time:new Date().getTime()
+                                },
+                                dataType:'json',
+                                success:function (data) {
+                                    switch (data.status) {
+                                        case 1:
+                                            alert(data.message);
+                                            $('#like').attr('class','btn btn-success');
+                                            $('#like').text("取消点赞");
+                                            break;
+                                        case 0:
+                                            alert(data.message);
+                                            $('#like').attr('class','btn');
+                                            $('#like').text('点赞');
+                                            break;
+                                        case -1:
+                                            alert(data.message);
+                                            break;
+                                    }
+                                }
+                            }
+                        )
+                    }else{
+                        alert('请登录后再点赞');
+                    }
+                })
+            })
+        </script>
+    </div>
+    {/block}

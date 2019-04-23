@@ -1,0 +1,38 @@
+{extend name="public:base"/}
+{block name="body"}
+<h4 class="text-center text-success">编辑文章</h4>
+<form action="{:url('article/doEdit')}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="id" value="{$artInfo.id}">
+
+    <div class="form-group">
+        <label for="title" class="control-label">标题</label>
+        <input type="text" name="title" class="form-control" id="title" value="{$artInfo.title}">
+    </div>
+
+    <div class="form-group">
+        <label for="title" class="control-label">分类</label>
+        <select name="cate_id" id="" class="form-control">
+            {volist name="cateList" id="cate"}
+            <option value="{$cate.id}" {if $cate.id == $artInfo.cate_id} selected {/if} >{$cate.name}</option>
+            {/volist}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="title" class="control-label">内容</label>
+        <textarea name="content" class="form-control" id="content" style="min-height: 250px">{$artInfo.content}</textarea>
+    </div>
+    <img src="/uploads/{$artInfo.title_img}" alt="缩略图" class="img-rounded">
+    <div class="form-group">
+        <label for="title_img" class="control-label">标题图片</label>
+        <input type="file" name="title_img" id="title_img" class="form-control" >
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" id="submit">保存</button>
+    </div>
+</form>
+<script>
+    bkLib.onDomLoaded(function() {
+        new nicEditor({iconsPath : '/static/nicEditorIcons.gif'}).panelInstance('content');
+    });
+</script>
+{/block}

@@ -1,0 +1,46 @@
+{extend name="public:base"}
+{block name="body"}
+<h4 class="text-center text-danger">编辑分类信息</h4>
+<form class="form-horizontal" action="{:url('cate/doEdit')}" method="post">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">分类名称:</label>
+        <div class="col-sm-9">
+            <input type="text"class="form-control" name="name" value="{$cateInfo.name}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">排序:</label>
+        <div class="col-sm-9">
+            <input type="number" class="form-control" name="sort" value="{$cateInfo.sort}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">状态:</label>
+        <div class="col-sm-9">
+            {eq name="$cateInfo.status" value="0"}
+            <label class="radio-inline">
+                <input type="radio" name="status" value="0" checked> 隐藏
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="status" value="1"> 显示
+            </label>
+            {else/}
+            <label class="radio-inline">
+                <input type="radio" name="status" value="0" > 隐藏
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="status" value="1" checked> 显示
+            </label>
+            {/eq}
+        </div>
+    </div>
+
+    <!--将当前用户的ID作为隐藏域数据传到服务器上-->
+    <input type="hidden" name="id" value="{$cateInfo.id}">
+    <div class="form-group text-center">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-info" >保存</button>
+        </div>
+    </div>
+</form>
+{/block}
